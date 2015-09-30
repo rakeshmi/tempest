@@ -14,6 +14,7 @@
 #    under the License.
 
 from tempest.api.volume import base
+from tempest.api.volume.jio.jio_policy import check_jio_policy
 from tempest import config
 from tempest import test
 
@@ -28,6 +29,7 @@ class VolumesV2ExtendTest(base.BaseVolumeTest):
         cls.client = cls.volumes_client
 
     @test.idempotent_id('9a36df71-a257-43a5-9555-dc7c88e66e0e')
+    @check_jio_policy
     def test_volume_extend(self):
         # Extend Volume Test.
         self.volume = self.create_volume()

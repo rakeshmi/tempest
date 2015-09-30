@@ -13,12 +13,11 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from testtools import matchers
-
 from tempest.api.volume import base
+from tempest.api.volume.jio.jio_policy import check_jio_policy
 from tempest import config
 from tempest import test
-
+from testtools import matchers
 CONF = config.CONF
 
 
@@ -41,6 +40,7 @@ class VolumesV2TransfersTest(base.BaseVolumeTest):
         self.adm_client.wait_for_resource_deletion(volume_id)
 
     @test.idempotent_id('4d75b645-a478-48b1-97c8-503f64242f1a')
+    @check_jio_policy
     def test_create_get_list_accept_volume_transfer(self):
         # Create a volume first
         volume = self.create_volume()
@@ -68,6 +68,7 @@ class VolumesV2TransfersTest(base.BaseVolumeTest):
         self.alt_client.wait_for_volume_status(volume['id'], 'available')
 
     @test.idempotent_id('ab526943-b725-4c07-b875-8e8ef87a2c30')
+    @check_jio_policy
     def test_create_list_delete_volume_transfer(self):
         # Create a volume first
         volume = self.create_volume()

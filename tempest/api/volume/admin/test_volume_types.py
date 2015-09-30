@@ -14,6 +14,7 @@
 #    under the License.
 
 from tempest.api.volume import base
+from tempest.api.volume.jio.jio_policy import check_jio_policy
 from tempest.common.utils import data_utils
 from tempest import config
 from tempest import test
@@ -31,12 +32,14 @@ class VolumeTypesV2Test(base.BaseVolumeAdminTest):
         self.volume_types_client.delete_volume_type(volume_type_id)
 
     @test.idempotent_id('9d9b28e3-1b2e-4483-a2cc-24aa0ea1de54')
+    @check_jio_policy
     def test_volume_type_list(self):
         # List Volume types.
         body = self.volume_types_client.list_volume_types()['volume_types']
         self.assertIsInstance(body, list)
 
     @test.idempotent_id('c03cc62c-f4e9-4623-91ec-64ce2f9c1260')
+    @check_jio_policy
     def test_volume_crud_with_volume_type_and_extra_specs(self):
         # Create/update/get/delete volume with volume_type and extra spec.
         volume_types = list()

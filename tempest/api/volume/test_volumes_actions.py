@@ -14,6 +14,7 @@
 #    under the License.
 
 from tempest.api.volume import base
+from tempest.api.volume.jio.jio_policy import check_jio_policy
 from tempest.common.utils import data_utils
 from tempest.common import waiters
 from tempest import config
@@ -138,6 +139,7 @@ class VolumesV2ActionsTest(base.BaseVolumeTest):
         return val in ['true', 'True', True]
 
     @test.idempotent_id('fff74e1e-5bd3-4b33-9ea9-24c103bc3f59')
+    @check_jio_policy
     def test_volume_readonly_update(self):
         # Update volume readonly true
         readonly = True

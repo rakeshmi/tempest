@@ -12,12 +12,12 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
-
-from testtools import matchers
-
 from tempest.api.volume import base
+from tempest.api.volume.jio.jio_policy import check_jio_policy
 from tempest import config
 from tempest import test
+from testtools import matchers
+import unittest
 
 CONF = config.CONF
 
@@ -35,6 +35,7 @@ class SnapshotV2MetadataTestJSON(base.BaseVolumeTest):
         cls.client = cls.snapshots_client
 
     @classmethod
+    @check_jio_policy
     def resource_setup(cls):
         super(SnapshotV2MetadataTestJSON, cls).resource_setup()
         # Create a volume
@@ -43,12 +44,14 @@ class SnapshotV2MetadataTestJSON(base.BaseVolumeTest):
         cls.snapshot = cls.create_snapshot(volume_id=cls.volume['id'])
         cls.snapshot_id = cls.snapshot['id']
 
+    @unittest.skip("JIO Doesn't Support")
     def tearDown(self):
         # Update the metadata to {}
         self.client.update_snapshot_metadata(self.snapshot_id, {})
         super(SnapshotV2MetadataTestJSON, self).tearDown()
 
     @test.idempotent_id('a2f20f99-e363-4584-be97-bc33afb1a56c')
+    @unittest.skip("JIO doesn't support this test")
     def test_create_get_delete_snapshot_metadata(self):
         # Create metadata for the snapshot
         metadata = {"key1": "value1",
@@ -72,6 +75,7 @@ class SnapshotV2MetadataTestJSON(base.BaseVolumeTest):
         self.assertNotIn("key1", body)
 
     @test.idempotent_id('bd2363bc-de92-48a4-bc98-28943c6e4be1')
+    @unittest.skip("JIO doesn't support this test")
     def test_update_snapshot_metadata(self):
         # Update metadata for the snapshot
         metadata = {"key1": "value1",
@@ -96,6 +100,7 @@ class SnapshotV2MetadataTestJSON(base.BaseVolumeTest):
         self.assertEqual(update, body)
 
     @test.idempotent_id('e8ff85c5-8f97-477f-806a-3ac364a949ed')
+    @unittest.skip("Jio Doesn't support this test")
     def test_update_snapshot_metadata_item(self):
         # Update metadata item for the snapshot
         metadata = {"key1": "value1",

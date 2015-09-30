@@ -14,9 +14,11 @@
 #    under the License.
 
 from tempest.api.volume import base
+from tempest.api.volume.jio.jio_policy import check_jio_policy
 from tempest.common.utils import data_utils
 from tempest import config
 from tempest import test
+import unittest
 
 CONF = config.CONF
 
@@ -34,6 +36,7 @@ class SnapshotsActionsV2Test(base.BaseVolumeAdminTest):
         cls.client = cls.snapshots_client
 
     @classmethod
+    @check_jio_policy
     def resource_setup(cls):
         super(SnapshotsActionsV2Test, cls).resource_setup()
 
@@ -57,8 +60,8 @@ class SnapshotsActionsV2Test(base.BaseVolumeAdminTest):
     @classmethod
     def resource_cleanup(cls):
         # Delete the test snapshot
-        cls.client.delete_snapshot(cls.snapshot['id'])
-        cls.client.wait_for_resource_deletion(cls.snapshot['id'])
+        # cls.client.delete_snapshot(cls.snapshot['id'])
+        # cls.client.wait_for_resource_deletion(cls.snapshot['id'])
 
         # Delete the test volume
         cls.volumes_client.delete_volume(cls.volume['id'])
@@ -66,6 +69,7 @@ class SnapshotsActionsV2Test(base.BaseVolumeAdminTest):
 
         super(SnapshotsActionsV2Test, cls).resource_cleanup()
 
+    @unittest.skip("JIO Doesn't Support this testcase")
     def tearDown(self):
         # Set snapshot's status to available after test
         status = 'available'
@@ -74,6 +78,7 @@ class SnapshotsActionsV2Test(base.BaseVolumeAdminTest):
                                                           status)
         super(SnapshotsActionsV2Test, self).tearDown()
 
+    @unittest.skip("JIO Doesn't Support this testcase")
     def _create_reset_and_force_delete_temp_snapshot(self, status=None):
         # Create snapshot, reset snapshot status,
         # and force delete temp snapshot
@@ -89,6 +94,7 @@ class SnapshotsActionsV2Test(base.BaseVolumeAdminTest):
         return 'os-extended-snapshot-attributes:progress'
 
     @test.idempotent_id('3e13ca2f-48ea-49f3-ae1a-488e9180d535')
+    @unittest.skip("JIO Doesn't Support this testcase")
     def test_reset_snapshot_status(self):
         # Reset snapshot status to creating
         status = 'creating'
@@ -99,6 +105,7 @@ class SnapshotsActionsV2Test(base.BaseVolumeAdminTest):
         self.assertEqual(status, snapshot_get['status'])
 
     @test.idempotent_id('41288afd-d463-485e-8f6e-4eea159413eb')
+    @unittest.skip("JIO Doesn't Support this testcase")
     def test_update_snapshot_status(self):
         # Reset snapshot status to creating
         status = 'creating'
@@ -117,21 +124,25 @@ class SnapshotsActionsV2Test(base.BaseVolumeAdminTest):
         self.assertEqual(progress, snapshot_get[progress_alias])
 
     @test.idempotent_id('05f711b6-e629-4895-8103-7ca069f2073a')
+    @unittest.skip("JIO Doesn't Support this testcase")
     def test_snapshot_force_delete_when_snapshot_is_creating(self):
         # test force delete when status of snapshot is creating
         self._create_reset_and_force_delete_temp_snapshot('creating')
 
     @test.idempotent_id('92ce8597-b992-43a1-8868-6316b22a969e')
+    @unittest.skip("JIO Doesn't Support this testcase")
     def test_snapshot_force_delete_when_snapshot_is_deleting(self):
         # test force delete when status of snapshot is deleting
         self._create_reset_and_force_delete_temp_snapshot('deleting')
 
     @test.idempotent_id('645a4a67-a1eb-4e8e-a547-600abac1525d')
+    @unittest.skip("JIO Doesn't Support this testcase")
     def test_snapshot_force_delete_when_snapshot_is_error(self):
         # test force delete when status of snapshot is error
         self._create_reset_and_force_delete_temp_snapshot('error')
 
     @test.idempotent_id('bf89080f-8129-465e-9327-b2f922666ba5')
+    @unittest.skip("JIO Doesn't Support this testcase")
     def test_snapshot_force_delete_when_snapshot_is_error_deleting(self):
         # test force delete when status of snapshot is error_deleting
         self._create_reset_and_force_delete_temp_snapshot('error_deleting')

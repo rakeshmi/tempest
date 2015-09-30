@@ -15,12 +15,12 @@
 
 import uuid
 
-from tempest_lib import exceptions as lib_exc
-
 from tempest.api.volume import base
+from tempest.api.volume.jio.jio_policy import check_jio_policy
 from tempest.common.utils import data_utils
 from tempest.common import waiters
 from tempest import test
+from tempest_lib import exceptions as lib_exc
 
 
 class VolumesV2NegativeTest(base.BaseVolumeTest):
@@ -104,6 +104,7 @@ class VolumesV2NegativeTest(base.BaseVolumeTest):
 
     @test.attr(type=['negative'])
     @test.idempotent_id('0c36f6ae-4604-4017-b0a9-34fdc63096f9')
+    @check_jio_policy
     def test_create_volume_with_nonexistent_snapshot_id(self):
         # Should not be able to create volume with non-existent snapshot
         v_name = data_utils.rand_name('Volume')
@@ -202,6 +203,7 @@ class VolumesV2NegativeTest(base.BaseVolumeTest):
 
     @test.attr(type=['negative'])
     @test.idempotent_id('e0c75c74-ee34-41a9-9288-2a2051452854')
+    @check_jio_policy
     def test_volume_extend_with_size_smaller_than_original_size(self):
         # Extend volume with smaller size than original size.
         extend_size = 0

@@ -13,10 +13,11 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from tempest_lib import exceptions as lib_exc
-
 from tempest.api.volume import base
+from tempest.api.volume.jio.jio_policy import check_jio_policy
 from tempest import test
+from tempest_lib import exceptions as lib_exc
+import unittest
 
 
 class BaseVolumeQuotasNegativeV2TestJSON(base.BaseVolumeAdminTest):
@@ -28,6 +29,7 @@ class BaseVolumeQuotasNegativeV2TestJSON(base.BaseVolumeAdminTest):
         cls.demo_tenant_id = cls.os.credentials.tenant_id
 
     @classmethod
+    @check_jio_policy
     def resource_setup(cls):
         super(BaseVolumeQuotasNegativeV2TestJSON, cls).resource_setup()
         cls.default_volume_size = cls.volumes_client.default_volume_size
@@ -53,13 +55,15 @@ class BaseVolumeQuotasNegativeV2TestJSON(base.BaseVolumeAdminTest):
 
     @test.attr(type='negative')
     @test.idempotent_id('02bbf63f-6c05-4357-9d98-2926a94064ff')
+    @check_jio_policy
     def test_quota_volume_snapshots(self):
         self.assertRaises(lib_exc.OverLimit,
                           self.snapshots_client.create_snapshot,
                           self.volume['id'])
 
     @test.attr(type='negative')
-    @test.idempotent_id('2dc27eee-8659-4298-b900-169d71a91374')
+    @test.idempotent_id('2dc27eee-8659-4298-b900-169d71a91375')
+    @unittest.skip("JIO Doesn't Support this testcase")
     def test_quota_volume_gigabytes(self):
         # NOTE(gfidente): quota set needs to be changed for this test
         # or we may be limited by the volumes or snaps quota number, not by
@@ -84,6 +88,24 @@ class BaseVolumeQuotasNegativeV2TestJSON(base.BaseVolumeAdminTest):
         self.assertRaises(lib_exc.OverLimit,
                           self.snapshots_client.create_snapshot,
                           self.volume['id'])
+
+    @test.attr(type='negative')
+    @test.idempotent_id('2dc27eee-8659-4298-b900-169d71a91374')
+    def test_quota_volume_gigabytes_jio(self):
+        # NOTE(gfidente): quota set needs to be changed for this test
+        # or we may be limited by the volumes or snaps quota number, not by
+        # actual gigs usage; next line ensures shared set is restored.
+        self.addCleanup(self.quotas_client.update_quota_set,
+                        self.demo_tenant_id,
+                        **self.shared_quota_set)
+
+        new_quota_set = {'gigabytes': 2 * self.default_volume_size,
+                         'volumes': 1}
+        self.quotas_client.update_quota_set(
+            self.demo_tenant_id,
+            **new_quota_set)
+        self.assertRaises(lib_exc.OverLimit,
+                          self.volumes_client.create_volume)
 
 
 class VolumeQuotasNegativeV1TestJSON(BaseVolumeQuotasNegativeV2TestJSON):
